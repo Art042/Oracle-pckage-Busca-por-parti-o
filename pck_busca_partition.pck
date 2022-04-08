@@ -1,3 +1,18 @@
+--------------------------Header--------------------------------------------------------------------
+create or replace package pck_busca_por_particao is
+
+    procedure execucao(p_id_vendedor         in number,
+                        p_cpf_vendedor      in number,
+                        p_id_cliente        in number,                
+                        p_cpf_cliente       in number,
+                        p_periodo_inicial   in varchar2,
+                        p_periodo_final     in varchar2,
+                        p_cursor            out t_cursor, 
+                        p_erro              out varchar2);
+
+end pck_busca_por_particao;
+----------------------------------------------------Body-------------------------------------------
+
 create or replace package body pck_busca_por_particao is --Retorna um lote de notas fiscais salvas
 
 /*
@@ -5,7 +20,7 @@ Oracle Package de Busca por particao, nesse caso a particao de data
 */
 
 
-    procedure executa(p_id_vendedor         in number,
+    procedure execucao(p_id_vendedor         in number,
                         p_cpf_vendedor      in number,
                         p_id_cliente        in number,                
                         p_cpf_cliente       in number,
@@ -39,12 +54,14 @@ Oracle Package de Busca por particao, nesse caso a particao de data
         if v_per_ini <> v_per_fim then
             v_query_partition := ' ';
         /* Substitui o próximo elsif
+        
+        elseif v_per_ini is null and v_per_fim is null then
+            raise erro_negocio; -- Deve ser informado um periodo de tempo.
         elsif v_per_ini is null then -- Pode ser usado para determinar o Mês inicial a partir do mês final
             v_per_ini:= add_months(v_per_fim,-1) 
         elsif v_per_fim is null then -- Pode ser usado para determinar o Mês final a partir do mês Inicial
             v_per_fim:= add_months(v_per_ini,1)
-        elseif v_per_ini is null and v_per_fim is null then
-            raise erro_negocio; -- Deve ser informado um periodo de tempo.
+        
         */    
         elsif v_per_ini is null then
             raise erro_negocio; -- Periodo de inicio deve ser informado.
