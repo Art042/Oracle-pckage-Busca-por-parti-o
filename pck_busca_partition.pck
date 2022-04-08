@@ -1,3 +1,9 @@
+/*
+Oracle Package de Busca por particao, nesse caso a particao de data por periodo de inicio e fim
+A busca por particao geralmente é usada em um banco com um grande volumes de Informacao.
+Nesse exemplo temos um banco relacional dividido em particoes com Notas fiscais de uma loja. 
+*/
+
 --------------------------Header--------------------------------------------------------------------
 create or replace package pck_busca_por_particao is
 
@@ -14,10 +20,6 @@ end pck_busca_por_particao;
 ----------------------------------------------------Body-------------------------------------------
 
 create or replace package body pck_busca_por_particao is --Retorna um lote de notas fiscais salvas
-
-/*
-Oracle Package de Busca por particao, nesse caso a particao de data
-*/
 
 
     procedure execucao(p_id_vendedor         in number,
@@ -55,14 +57,12 @@ Oracle Package de Busca por particao, nesse caso a particao de data
             v_query_partition := ' ';
         elsif (v_per_ini is null and v_per_fim is null) then
             raise erro_negocio; -- Deve ser informado um periodo de tempo.
-        elsif v_per_ini is null then -- Pode ser usado para determinar o Mês inicial a partir do mês final
-            v_per_ini:= to_char(add_months(to_date(p_periodo_final, 'dd/mm/yyyy'),-1),'yyyymm'); 
-        elsif v_per_fim is null then -- Pode ser usado para determinar o Mês final a partir do mês Inicial
-            v_per_fim:= to_char(add_months(to_date(p_periodo_inicial, 'dd/mm/yyyy'),1),'yyyymm');        
+        elsif v_per_ini is null then -- Pode ser usado para determinar o mes inicial a partir do mes final
+            v_per_ini:= to_char(add_months(to_date(p_periodo_final, 'dd/mm/yyyy'),-1),'yyyymm');        
         else
-            v_query_partition := ' partition(P_' || to_char(v_per_ini) || ') ';
+            v_query_partition := ' partition(P_' || to_char(v_per_ini) || ') '; --Particao Retorna 1 mes
         end if;
-        v_aux := to_date(p_periodo_final, 'dd/mm/yyyy') - to_date(p_periodo_inicial, 'dd/mm/yyyy');
+            v_aux := to_date(p_periodo_final, 'dd/mm/yyyy') - to_date(p_periodo_inicial, 'dd/mm/yyyy');
                 
     /* Controle de Tempo da Particao, aqui esta configurado para 31 dias*/  
         if v_aux > 31 then
