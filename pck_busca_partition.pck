@@ -58,14 +58,16 @@ create or replace package body pck_busca_por_particao is --Retorna um lote de no
         elsif (v_per_ini is null and v_per_fim is null) then
             raise erro_negocio; -- Deve ser informado um periodo de tempo.
         elsif v_per_ini is null then -- Pode ser usado para determinar o mes inicial a partir do mes final
-            v_per_ini:= to_char(add_months(to_date(p_periodo_final, 'dd/mm/yyyy'),-1),'yyyymm');        
+            v_per_ini:= to_char(add_months(to_date(p_periodo_final, 'dd/mm/yyyy'),-1),'yyyymm');
+        elsif v_per_fim is null then -- Pode ser usado para determinar o mes inicial a partir do mes final
+            v_per_fim:= to_char(add_months(to_date(p_periodo_inicial, 'dd/mm/yyyy'),1),'yyyymm');        
         else
             v_query_partition := ' partition(P_' || to_char(v_per_ini) || ') '; --Particao Retorna 1 mes
         end if;
-            v_aux := to_date(p_periodo_final, 'dd/mm/yyyy') - to_date(p_periodo_inicial, 'dd/mm/yyyy');
+            v_aux := TO_NUMBER(v_per_fim) - TO_NUMBER(v_per_ini);
                 
-    /* Controle de Tempo da Particao, aqui esta configurado para 31 dias*/  
-        if v_aux > 31 then
+    /* Controle de Tempo da Particao, aqui esta configurado para 1 mes*/  
+        if v_aux <> 1 then
             raise erro_negocio; -- Periodo informado nao pode ser superior a 01 mes.
         end if;
         
