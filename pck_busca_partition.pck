@@ -1,4 +1,4 @@
-create or replace package body pck_nfe_lote is --Retorna um lote de notas fiscais salvas
+create or replace package body pck_busca_por_particao is --Retorna um lote de notas fiscais salvas
 
 /*
 Oracle Package de Busca por particao, nesse caso a particao de data
