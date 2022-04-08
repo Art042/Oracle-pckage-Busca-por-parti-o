@@ -67,7 +67,7 @@ create or replace package body pck_busca_por_particao is --Retorna um lote de no
             v_aux := TO_NUMBER(v_per_fim) - TO_NUMBER(v_per_ini);
                 
     /* Controle de Tempo da Particao, aqui esta configurado para 1 mes*/  
-        if v_aux <> 1 then
+        if v_aux > 1 or v_aux < 0 then
             raise erro_negocio; -- Periodo informado nao pode ser superior a 01 mes.
         end if;
         
