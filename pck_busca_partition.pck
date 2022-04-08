@@ -96,23 +96,23 @@ create or replace package body pck_busca_por_particao is --Retorna um lote de no
         end if;
         
     if p_id_vendedor  is not null then
-        v_sq    l := v_query || ' ID_VENDEDOR = ' || p_id_vendedor   ;
+        v_sq    l := v_query || ' ID_VENDEDOR = ' || p_id_vendedor;
     end If; 
 
     if p_id_cliente is not null then
-        v_query := v_query || ' and ID_CLIENTE = ' || p_id_clien        te;
+        v_query := v_query || ' and ID_CLIENTE = ' || p_id_cliente;
     end if;
 
     if p_cpf_vendedor is not null then
         v_query := v_query || ' and CPF_VENDEDOR = ' || p_cpf_vendedor;
-        end if; 
+    end if; 
         
-        if p_cpf_cliente is not null then
+    if p_cpf_cliente is not null then
         v_query := v_query || ' and CPF_CLIENTE = ' || p_cpf_cliente;
-        end if;
+    end if;
         
         
-        open p_cursor for v_query;
+    open p_cursor for v_query;
         
     exception
         when erro_negocio then
