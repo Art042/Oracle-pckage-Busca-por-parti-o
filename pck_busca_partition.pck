@@ -16,8 +16,8 @@ Oracle Package de Busca por particao, nesse caso a particao de data
 
 
 
-    v_sql    varchar2(1500);     
-    v_sql_partition varchar2(1500);
+    v_query    varchar2(1500);     
+    v_query_partition varchar2(1500);
   
     v_aux  number(4);
   
@@ -37,40 +37,45 @@ Oracle Package de Busca por particao, nesse caso a particao de data
         v_per_fim := to_char(to_date(p_periodo_final, 'dd/mm/yyyy'), 'yyyymm');
         
         if v_per_ini <> v_per_fim then
-            v_sql_partition := ' ';  
+            v_query_partition := ' ';
+        /* Substitui o próximo elsif
+        elsif v_per_ini is null then -- Pode ser usado para determinar o Mês inicial a partir do mês final
+            v_per_ini:= add_months(v_per_fim,-1) 
+        elsif v_per_fim is null then -- Pode ser usado para determinar o Mês final a partir do mês Inicial
+            v_per_fim:= add_months(v_per_ini,1)
+        elseif v_per_ini is null and v_per_fim is null then
+            raise erro_negocio; -- Deve ser informado um periodo de tempo.
+        */    
         elsif v_per_ini is null then
             raise erro_negocio; -- Periodo de inicio deve ser informado.
-            dbms_output.put_line('DEVE SER ADICIONADA DATA INICIAL');
         else
-            v_sql_partition := ' partition(P_' || to_char(v_per_ini) || ') ';
+            v_query_partition := ' partition(P_' || to_char(v_per_ini) || ') ';
         end if;
-    
         v_aux := to_date(p_periodo_final, 'dd/mm/yyyy') - to_date(p_periodo_inicial, 'dd/mm/yyyy');
                 
     /* Controle de Tempo da Particao, aqui esta configurado para 31 dias*/  
         if v_aux > 31 then
-        raise erro_negocio; -- Periodo informado nao pode ser superior a 01 mes.
-        dbms_output.put_line('PERIODO SUPERIOR A 31 DIAS');
+            raise erro_negocio; -- Periodo informado nao pode ser superior a 01 mes.
         end if;
         
-        v_sql := '
-        SELECT 
-        NUM_NOTA,
-        CPF_VENDEDOR,
-        ID_VENDEDOR,
-        NOME_VENDEDOR,
-        CPF_CLIENTE,
-        ID_CLIENTE,
-        NOME_CLIENTE,
-        decode(TDE_TPOPER,''0'',''Entrada'',''1'',''SAIDA'') OPERACAO,
-        ST.STATUS,
-        to_char(TDE_DTEMISSAO, ''dd/mm/yyyy'') DATA_EMISSAO
-        from  tab_notas_fiscais ' || v_sql_partition || ' s, tab_info_loja st
-        where s.campo_1 = st.campo_11
-        ';
+        v_query := '
+            SELECT 
+            NUM_NOTA,
+            CPF_VENDEDOR,
+            ID_VENDEDOR,
+            NOME_VENDEDOR,
+            CPF_CLIENTE,
+            ID_CLIENTE,
+            NOME_CLIENTE,
+            decode(TDE_TPOPER,''0'',''Entrada'',''1'',''SAIDA'') OPERACAO,
+            ST.STATUS,
+            to_char(TDE_DTEMISSAO, ''dd/mm/yyyy'') DATA_EMISSAO
+            from  tab_notas_fiscais ' || v_query_partition || ' s, tab_info_loja st
+            where s.campo_1 = st.campo_11
+            ';
         
         if p_periodo_inicial is not null and p_periodo_final is not null then
-        v_sql := v_sql || ' and to_char(TDE_DTEMISSAO,''dd/mm/yyyy'') BETWEEN
+        v_query := v_query || ' and to_char(TDE_DTEMISSAO,''dd/mm/yyyy'') BETWEEN
             to_date(''' || p_periodo_inicial ||
                     ''',''dd/mm/yyyy'') AND
                 to_date(''' || p_periodo_final ||
@@ -78,23 +83,23 @@ Oracle Package de Busca por particao, nesse caso a particao de data
         end if;
         
     if p_id_vendedor  is not null then
-        v_sq    l := v_sql || ' ID_VENDEDOR = ' || p_id_vendedor   ;
+        v_sq    l := v_query || ' ID_VENDEDOR = ' || p_id_vendedor   ;
     end If; 
 
     if p_id_cliente is not null then
-        v_sql := v_sql || ' and ID_CLIENTE = ' || p_id_clien        te;
+        v_query := v_query || ' and ID_CLIENTE = ' || p_id_clien        te;
     end if;
 
     if p_cpf_vendedor is not null then
-        v_sql := v_sql || ' and CNPJ_LOJA = ' || p_cpf_vendedor;
+        v_query := v_query || ' and CPF_VENDEDOR = ' || p_cpf_vendedor;
         end if; 
         
         if p_cpf_cliente is not null then
-        v_sql := v_sql || ' and CPF_CLIENTE = ' || p_cpf_cliente;
+        v_query := v_query || ' and CPF_CLIENTE = ' || p_cpf_cliente;
         end if;
         
         
-        open p_cursor for v_sql;
+        open p_cursor for v_query;
         
     exception
         when erro_negocio then
