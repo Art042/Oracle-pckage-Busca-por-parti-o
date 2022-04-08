@@ -66,7 +66,7 @@ Oracle Package de Busca por particao, nesse caso a particao de data
         ST.STATUS,
         to_char(TDE_DTEMISSAO, ''dd/mm/yyyy'') DATA_EMISSAO
         from  tab_notas_fiscais ' || v_sql_partition || ' s, tab_info_loja st
-        where s.tde_status = st.tns_codigo
+        where s.campo_1 = st.campo_11
         ';
         
         if p_periodo_inicial is not null and p_periodo_final is not null then
