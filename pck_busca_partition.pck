@@ -5,13 +5,13 @@ Oracle Package de Busca por particao, nesse caso a particao de data
 */
 
 
-    procedure executa(p_id_vendedor           in number,
-                        p_cpf_vendedor               in number,
+    procedure executa(p_id_vendedor         in number,
+                        p_cpf_vendedor      in number,
                         p_id_cliente        in number,                
-                        p_cpf_cliente         in number,
+                        p_cpf_cliente       in number,
                         p_periodo_inicial   in varchar2,
                         p_periodo_final     in varchar2,
-                        p_cursor     out pck_tipos.t_cursor,
+                        p_cursor            out t_cursor, 
                         p_erro              out varchar2) is
 
 
