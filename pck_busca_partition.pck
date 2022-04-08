@@ -11,7 +11,7 @@ Oracle Package de Busca por particao, nesse caso a particao de data
                         p_cpf_cliente         in number,
                         p_periodo_inicial   in varchar2,
                         p_periodo_final     in varchar2,
-                        p_lista_retorno     out pck_tipos.t_cursor,
+                        p_cursor     out pck_tipos.t_cursor,
                         p_erro              out varchar2) is
 
 
@@ -94,11 +94,11 @@ Oracle Package de Busca por particao, nesse caso a particao de data
         end if;
         
         
-        open p_lista_retorno for v_sql;
+        open p_cursor for v_sql;
         
     exception
         when erro_negocio then
-        open p_lista_retorno for
+        open p_cursor for
             select 0 from dual where 1 = 2;
         p_erro := 'S';
         
