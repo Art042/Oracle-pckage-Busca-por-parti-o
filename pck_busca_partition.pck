@@ -65,7 +65,7 @@ Oracle Package de Busca por particao, nesse caso a particao de data
         decode(TDE_TPOPER,''0'',''Entrada'',''1'',''SAIDA'') OPERACAO,
         ST.STATUS,
         to_char(TDE_DTEMISSAO, ''dd/mm/yyyy'') DATA_EMISSAO
-        from  tab_notas_fiscais ' || v_sql_partition || ' s, apl_nfe.tab_nfe_status st
+        from  tab_notas_fiscais ' || v_sql_partition || ' s, tab_info_loja st
         where s.tde_status = st.tns_codigo
         ';
         
