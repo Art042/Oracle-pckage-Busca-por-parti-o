@@ -55,12 +55,12 @@ Oracle Package de Busca por particao, nesse caso a particao de data
             v_query_partition := ' ';
         /* Substitui o próximo elsif
         
-        elsif v_per_ini is null and v_per_fim is null then
+        elsif (v_per_ini is null and v_per_fim is null) then
             raise erro_negocio; -- Deve ser informado um periodo de tempo.
         elsif v_per_ini is null then -- Pode ser usado para determinar o Mês inicial a partir do mês final
-            v_per_ini:= add_months(v_per_fim,-1) 
+            v_per_ini:= to_char(add_months(to_date(p_periodo_final, 'dd/mm/yyyy'),-1),'yyyymm'); 
         elsif v_per_fim is null then -- Pode ser usado para determinar o Mês final a partir do mês Inicial
-            v_per_fim:= add_months(v_per_ini,1)
+            v_per_fim:= to_char(add_months(to_date(p_periodo_inicial, 'dd/mm/yyyy'),1),'yyyymm');
         
         */    
         elsif v_per_ini is null then
